@@ -1,0 +1,6 @@
+.idea
+webserv
+DS_Store
+.vscode
+.obj
+*.o
