@@ -44,7 +44,7 @@ clean:
 	@echo "$(RED)$(DIR_OBJS) removed $(CROSS)$(RESET_COLOR) "
 
 fclean: clean
-	@rm -f $(NAME)
+	@rm -rf $(NAME)
 
 FORCE:
 
