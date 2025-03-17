@@ -1,34 +1,43 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ibjean-b <ibjean-b@student.42.fr>          #+#  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025-03-17 11:28:19 by ibjean-b          #+#    #+#             */
-/*   Updated: 2025-03-17 11:28:19 by ibjean-b         ###   ########.fr       */
+/*   Created: 2025-03-17 11:32:07 by ibjean-b          #+#    #+#             */
+/*   Updated: 2025-03-17 11:32:07 by ibjean-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#ifndef	SERVER_HPP
+#define	SERVER_HPP
+
 #include <iostream>
-#include "server.hpp"
+#include <map>
 
-int	main(int argc, char const *argv[])
+
+class server
 {
-	if (argc != 2)
+	enum elements
 	{
-		std::cerr << "Usage: " << argv[0] << " [config_file]" << std::endl;
-		return (1);
-	}
+		NAME,
+		LISTEN,
+		CGI,
+		BODY_SIZE,
+		LOCATION,
+		LIMIT_EXCEPT,
+	};
 
-	try
-	{
-		server serv(std::string(argv[1]).c_str());
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
-	
-	return (0);
-}
+	private:
+		bool							_running;
+		std::map<elements, std::string>	_config;
+
+	public:
+		server();
+		~server();
+		server(const std::string config_file);
+		void	parse_file(std::ifstream &file);
+};
+
+#endif

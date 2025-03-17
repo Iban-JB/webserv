@@ -8,7 +8,7 @@ FLAGS = -Wall -Werror -Wextra -std=c++98
 
 DFLAGS = -MD -MP
 
-SRC = main.cpp
+SRC = main.cpp server.cpp
 
 SRC_PATH = src/
 
@@ -45,6 +45,7 @@ clean:
 
 fclean: clean
 	@rm -rf $(NAME)
+	@echo "$(RED)$(NAME) removed $(CROSS)$(RESET_COLOR) "
 
 FORCE:
 
