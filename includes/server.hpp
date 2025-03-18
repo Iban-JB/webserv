@@ -19,7 +19,7 @@
 
 class server
 {
-	enum elements
+	enum attributes
 	{
 		NAME,
 		LISTEN,
@@ -30,14 +30,18 @@ class server
 	};
 
 	private:
-		bool							_running;
-		std::map<elements, std::string>	_config;
+		bool								_running;
+		std::map<attributes, std::string>	_config;
 
 	public:
 		server();
 		~server();
 		server(const std::string config_file);
-		void	parse_file(std::ifstream &file);
-};
+
+		void		parse_file(std::ifstream &file);
+		bool		is_in_config(std::string &line);
+		std::string	is_attribute(std::string &line);
+		void		display_config(void);
+	};
 
 #endif

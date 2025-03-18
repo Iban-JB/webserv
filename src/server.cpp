@@ -59,33 +59,84 @@ void	server::parse_file(std::ifstream &file)
 		if (line.find(";") == std::string::npos && !(line.find("{") == std::string::npos || line.find("}") == std::string::npos))
 		{
 			std::cerr << line << std::endl;
-			throw std::runtime_error("Error: missing semicolon");
+			throw (std::runtime_error("Error: missing semicolon"));
 		}
-		if (line.find("listen") != std::string::npos)
-			this->_config.insert(std::pair<elements, std::string>(LISTEN, line));
-		if (line.find("server_name") != std::string::npos)
-			this->_config.insert(std::pair<elements, std::string>(NAME, line));
-		if (line.find("cgi") != std::string::npos)
-			this->_config.insert(std::pair<elements, std::string>(CGI, line));
-		if (line.find("client_max_body_size") != std::string::npos)
-			this->_config.insert(std::pair<elements, std::string>(BODY_SIZE, line));
-		if (line.find("limit_except") != std::string::npos)
-			this->_config.insert(std::pair<elements, std::string>(LIMIT_EXCEPT, line));
-		if (line.find("location") != std::string::npos && line.find("{") != std::string::npos)
+
+		std::string attribute = is_attribute(line);
+		if (!(attribute.empty()))
 		{
-			std::string location = "";
-			while (std::getline(file, line) && line.find("}") == std::string::npos)
-				location += line;
-			this->_config.insert(std::pair<elements, std::string>(LOCATION, location));
+			if (is_in_config(attribute))
+				throw (std::runtime_error("Error: duplicate attribute"));
+			if (attribute == "listen")
+				this->_config.insert(std::pair<attributes, std::string>(LISTEN, line));
+			if (attribute == "server_name")
+				this->_config.insert(std::pair<attributes, std::string>(NAME, line));
+			if (attribute == "cgi")
+				this->_config.insert(std::pair<attributes, std::string>(CGI, line));
+			if (attribute == "client_max_body_size")
+				this->_config.insert(std::pair<attributes, std::string>(BODY_SIZE, line));
+			if (attribute == "limit_except")	
+				this->_config.insert(std::pair<attributes, std::string>(LIMIT_EXCEPT, line));
+			if (attribute == "location")
+			{
+				std::string location = "";
+				while (std::getline(file, line) && line.find("}") == std::string::npos)
+				{
+					display_config();
+					attribute = is_attribute(line);
+					if (!(attribute.empty()) && is_in_config(attribute))
+					{
+						std::cerr << "test\n" << line << std::endl;
+						std::cerr << attribute << std::endl;
+						throw (std::runtime_error("Error: duplicate attribute"));
+					}
+					else if (attribute.empty())
+						location += line;
+				}
+				this->_config.insert(std::pair<attributes, std::string>(LOCATION, location));
+			}
 		}
+
 	}
 	if (_config.empty())
 		throw std::runtime_error("Error: could not find any server block");
+}
 
-	std::map<elements, std::string>::iterator it = this->_config.begin();
+void	server::display_config(void)
+{
+	std::map<attributes, std::string>::iterator it = this->_config.begin();
 	while (it != this->_config.end())
 	{
 		std::cout << it->first << " : " << it->second << std::endl;
 		it++;
 	}
+}
+
+std::string	server::is_attribute(std::string &line)
+{
+	if (line.find("listen") != std::string::npos)
+		return ("listen");
+	if (line.find("server_name") != std::string::npos)
+		return ("server_name");
+	if (line.find("cgi") != std::string::npos)
+		return ("cgi");
+	if (line.find("client_max_body_size") != std::string::npos)
+		return ("client_max_body_size");
+	if (line.find("location") != std::string::npos)
+		return ("location");
+	if (line.find("limit_except") != std::string::npos)
+		return ("limit_except");
+	return ("");
+}
+
+bool	server::is_in_config(std::string &attribute)
+{
+	std::map<attributes, std::string>::iterator it = this->_config.begin();
+	while (it != this->_config.end())
+	{
+		if (it->second.find(attribute) != std::string::npos)
+			return (true);
+		it++;
+	}
+	return (false);
 }
