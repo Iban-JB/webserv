@@ -79,19 +79,12 @@ void	server::parse_file(std::ifstream &file)
 				this->_config.insert(std::pair<attributes, std::string>(LIMIT_EXCEPT, line));
 			if (attribute == "location")
 			{
-				std::string location = "";
+				std::string location = line;
 				while (std::getline(file, line) && line.find("}") == std::string::npos)
 				{
-					display_config();
-					attribute = is_attribute(line);
-					if (!(attribute.empty()) && is_in_config(attribute))
-					{
-						std::cerr << "test\n" << line << std::endl;
-						std::cerr << attribute << std::endl;
-						throw (std::runtime_error("Error: duplicate attribute"));
-					}
-					else if (attribute.empty())
-						location += line;
+					location += line;
+					if (is_attribute(location) != "" && is_attribute(location) != "location")
+						throw (std::runtime_error("Error: location block cannot contain attributes"));
 				}
 				this->_config.insert(std::pair<attributes, std::string>(LOCATION, location));
 			}
