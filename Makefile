@@ -8,7 +8,7 @@ FLAGS = -Wall -Werror -Wextra -std=c++98
 
 DFLAGS = -MD -MP
 
-SRC = main.cpp server.cpp
+SRC = 	main.cpp Server.cpp AAttributes.cpp Location.cpp
 
 SRC_PATH = src/
 

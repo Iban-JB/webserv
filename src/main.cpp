@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include <iostream>
-#include "server.hpp"
+#include "Server.hpp"
 
 int	main(int argc, char const *argv[])
 {
@@ -25,7 +25,10 @@ int	main(int argc, char const *argv[])
 		config = argv[1];
 	try
 	{
-		
+		std::vector<Location>	loc;
+		Server	test_sevr(8080, "myServ", "localhost", &loc, true);
+		std::cout << test_sevr;
+		test_sevr.start();
 	}
 	catch(const std::exception& e)
 	{
