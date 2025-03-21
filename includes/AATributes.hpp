@@ -11,19 +11,24 @@
 /* ************************************************************************** */
 
 #ifndef	AATTRIBUTES
-#define	AATTRIBUTES
+# define	AATTRIBUTES
 
-#include <iostream>
-#include <vector>
+# include <iostream>
+# include <vector>
+# include "Http.hpp"
 
 class AATributes
 {
 private:
 	std::string					_root;
-	std::vector<std::string>	_error_pages;
+	std::map<int, std::string>  _errorPages;
+	std::vector<EHttpMethode> 	_httpMethode;
+	bool						_autoIndex;
+	vector<std::string>			_index;
+
 public:
 	AATributes();
-	~AATributes();
+	virtual ~AATributes();
 };
 
 #endif

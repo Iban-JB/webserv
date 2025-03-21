@@ -22,7 +22,7 @@
 class Server : public AATributes
 {
 private:
-//	int						_port;
+	int						_port;
 	std::string				_host;
 	std::string				_name;
 	std::vector<Location>	_loc;

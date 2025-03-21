@@ -12,7 +12,8 @@ SRC = main.cpp \
 	Server.cpp \
 	AATributes.cpp \
 	Location.cpp \
-	Parser.cpp
+	Parser.cpp \
+	Http.cpp
 
 SRC_PATH = src/
 
