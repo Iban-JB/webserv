@@ -1,34 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.hpp                                         :+:      :+:    :+:   */
+/*   AAttributes.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ibjean-b <ibjean-b@student.42.fr>          #+#  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025-03-20 11:55:11 by ibjean-b          #+#    #+#             */
-/*   Updated: 2025-03-20 11:55:11 by ibjean-b         ###   ########.fr       */
+/*   Created: 2025-03-21 14:00:01 by ibjean-b          #+#    #+#             */
+/*   Updated: 2025-03-21 14:00:01 by ibjean-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef	SERVER_HPP
-#define	SERVER_HPP
+#ifndef	AATTRIBUTES
+#define	AATTRIBUTES
 
-#include <map>
-#include <vector>
 #include <iostream>
-#include "location.hpp"
-#include "AAttributes.hpp"
+#include <vector>
 
-class server : public AAttributes
+class AAttributes
 {
 private:
-	int						_port;
-	std::string				_host;
-	std::string				_name;
-	std::vector<location>	_loc;
+	std::string					_root;
+	std::vector<std::string>	_error_pages;
 public:
-	server();
-	~server();		
+	AAttributes();
+	~AAttributes();
 };
 
 #endif

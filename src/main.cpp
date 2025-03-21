@@ -15,15 +15,17 @@
 
 int	main(int argc, char const *argv[])
 {
+	std::string	config = "config/default.conf";
 	if (argc != 2)
 	{
 		std::cerr << "Usage: " << argv[0] << " [config_file]" << std::endl;
 		return (1);
 	}
-
+	else
+		config = argv[1];
 	try
 	{
-		server serv(std::string(argv[1]).c_str());
+		
 	}
 	catch(const std::exception& e)
 	{

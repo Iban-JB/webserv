@@ -1,34 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.hpp                                         :+:      :+:    :+:   */
+/*   parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ibjean-b <ibjean-b@student.42.fr>          #+#  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025-03-20 11:55:11 by ibjean-b          #+#    #+#             */
-/*   Updated: 2025-03-20 11:55:11 by ibjean-b         ###   ########.fr       */
+/*   Created: 2025-03-19 16:59:30 by ibjean-b          #+#    #+#             */
+/*   Updated: 2025-03-19 16:59:30 by ibjean-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef	SERVER_HPP
-#define	SERVER_HPP
+#include "parser.hpp"
+#include <fstream>
 
-#include <map>
-#include <vector>
-#include <iostream>
-#include "location.hpp"
-#include "AAttributes.hpp"
-
-class server : public AAttributes
+parser::parser()
 {
-private:
-	int						_port;
-	std::string				_host;
-	std::string				_name;
-	std::vector<location>	_loc;
-public:
-	server();
-	~server();		
-};
+}
 
-#endif
+parser::~parser()
+{
+}
+
+parser::parser(std::string config_file)
+{
+	std::ifstream file;
+	try
+	{
+		file.open(config_file.c_str());
+		if (!file.is_open())
+			throw (std::runtime_error("Error: could not open file"));
+		//parse_file(file);
+		file.close();
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+	}
+}
