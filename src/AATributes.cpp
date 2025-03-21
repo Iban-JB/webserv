@@ -1,22 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   location.cpp                                       :+:      :+:    :+:   */
+/*   AAttributes.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ibjean-b <ibjean-b@student.42.fr>          #+#  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025-03-20 11:57:28 by ibjean-b          #+#    #+#             */
-/*   Updated: 2025-03-20 11:57:28 by ibjean-b         ###   ########.fr       */
+/*   Created: 2025-03-21 14:01:10 by ibjean-b          #+#    #+#             */
+/*   Updated: 2025-03-21 14:01:10 by ibjean-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "location.hpp"
+#include "AATributes.hpp"
 
-location::location()
+
+AATributes::AATributes()
 {
 }
 
-location::~location()
+AATributes::~AATributes()
 {
 }
 

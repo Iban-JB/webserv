@@ -1,26 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   location.hpp                                       :+:      :+:    :+:   */
+/*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ibjean-b <ibjean-b@student.42.fr>          #+#  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025-03-20 11:58:44 by ibjean-b          #+#    #+#             */
-/*   Updated: 2025-03-20 11:58:44 by ibjean-b         ###   ########.fr       */
+/*   Created: 2025-03-20 11:54:20 by ibjean-b          #+#    #+#             */
+/*   Updated: 2025-03-20 11:54:20 by ibjean-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LOCATION_HPP
-#define LOCATION_HPP
+#include "Server.hpp"
 
-#include <iostream>
-
-class location
+Server::Server()
 {
-private:
-public:
-	location();
-	~location();
-};
+}
 
-#endif
+Server::~Server()
+{
+}
+

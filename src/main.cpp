@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include <iostream>
-#include "server.hpp"
+#include "Server.hpp"
 
 int	main(int argc, char const *argv[])
 {
@@ -31,6 +31,5 @@ int	main(int argc, char const *argv[])
 	{
 		std::cerr << e.what() << '\n';
 	}
-	
 	return (0);
 }
