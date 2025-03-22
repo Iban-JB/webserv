@@ -11,6 +11,8 @@
 /* ************************************************************************** */
 
 #include "Server.hpp"
+#include "defines.hpp"
+#include <sys/epoll.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 
@@ -42,9 +44,30 @@ void	Server::start(void)
 	network.sin_port = htons(_port);
 	network.sin_addr.s_addr = INADDR_ANY;
 
-	//bind
-	//listen
-		
+	if (bind(fd_sock, (struct sockaddr*)&network, sizeof(network)) == -1)
+		throw (std::runtime_error("Error: binding socket failed"));
+	
+	if (listen(fd_sock, MAX_LISTEN))
+		throw (std::runtime_error("Error: binding socket failed"));
+	
+	this->run(fd_sock);
+}
+
+void	Server::run(int fd_sock)
+{
+	fd_set	fdSet;
+	fd_set	readSet;
+	fd_set	writeSet;
+
+	FD_ZERO(&fdSet);
+	FD_SET(fd_sock, &fdSet);
+
+	while (_on)
+	{
+		readSet = fdSet;
+		writeSet = fdSet;
+		//poll or slect 
+	}	
 }
 
 void	Server::setPort(int port)

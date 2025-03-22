@@ -34,6 +34,7 @@ public:
 	Server(int port, std::string name, std::string host, std::vector<Location> *locations, bool is_on);
 
 	void	start(void);
+	void	run(int fd_sock);
 
 	//GETTERS AND SETTERS
 	int						getPort(void);
