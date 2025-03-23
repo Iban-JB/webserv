@@ -15,7 +15,10 @@
 #include <sys/epoll.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
+#include <string.h>
+#include <cerrno>
 
+#include <sys/wait.h>
 Server::Server()
 {
 }
@@ -50,23 +53,30 @@ void	Server::start(void)
 	if (listen(fd_sock, MAX_LISTEN))
 		throw (std::runtime_error("Error: binding socket failed"));
 	
-	this->run(fd_sock);
+	try
+	{
+		this->run(fd_sock);
+	}
+	catch(const std::exception& e)
+	{
+		throw (e);
+	}
 }
 
 void	Server::run(int fd_sock)
 {
-	fd_set	fdSet;
-	fd_set	readSet;
-	fd_set	writeSet;
+	int	fd_poll = epoll_create1(0);
+	if (fd_poll == -1)
+		throw (std::runtime_error("Error: creating epoll failed: " + std::string(strerror(errno))));
 
-	FD_ZERO(&fdSet);
-	FD_SET(fd_sock, &fdSet);
+	epoll_event	event;
+	event.events = EPOLLIN;
+	event.data.fd = fd_sock;
 
 	while (_on)
 	{
-		readSet = fdSet;
-		writeSet = fdSet;
-		//poll or slect 
+		std::cout << "Waiting for connection" << std::endl;
+		sleep(10);
 	}	
 }
 
