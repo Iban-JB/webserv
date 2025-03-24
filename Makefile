@@ -10,7 +10,7 @@ DFLAGS = -MD -MP
 
 SRC = main.cpp \
 	Server.cpp \
-	AATributes.cpp \
+	AAtributes.cpp \
 	Location.cpp \
 	Parser.cpp \
 	Http.cpp

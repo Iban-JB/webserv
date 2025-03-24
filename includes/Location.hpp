@@ -14,8 +14,9 @@
 #define LOCATION_HPP
 
 #include <iostream>
+#include "AAtributes.hpp"
 
-class Location
+class Location : public AAtributes
 {
 private:
 public:
