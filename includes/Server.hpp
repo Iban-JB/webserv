@@ -16,6 +16,7 @@
 #include <map>
 #include <vector>
 #include <iostream>
+#include <sys/epoll.h>
 #include "Location.hpp"
 #include "AAttributes.hpp"
 
@@ -35,6 +36,8 @@ public:
 
 	void	start(void);
 	void	run(int fd_sock);
+	void	accept_client(int fd_sock, int fd_epoll, epoll_event *events);
+	void	client_request(int fd_sock);
 
 	//GETTERS AND SETTERS
 	int						getPort(void);

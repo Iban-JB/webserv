@@ -17,8 +17,10 @@
 #include <sys/socket.h>
 #include <string.h>
 #include <cerrno>
+#include <netdb.h>
+#include <sys/types.h>
 
-#include <sys/wait.h>
+#include <sys/wait.h> //REMOVE THIS LINE LATER
 Server::Server()
 {
 }
@@ -39,19 +41,23 @@ Server::Server(int port, std::string name, std::string host, std::vector<Locatio
 void	Server::start(void)
 {
 	int	fd_sock = socket(AF_INET, SOCK_STREAM, 0);
+
+	int opt = 1;
+	setsockopt(fd_sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(int)); //REMOVE THIS LINE LATER
+
 	if (fd_sock == -1)
 		throw (std::runtime_error("Error: creating socket failed"));
 	
 	sockaddr_in		network;
 	network.sin_family = AF_INET;
 	network.sin_port = htons(_port);
-	network.sin_addr.s_addr = INADDR_ANY;
+	network.sin_addr.s_addr = INADDR_ANY; //change depending on host //! IMPORTANT ! 
 
 	if (bind(fd_sock, (struct sockaddr*)&network, sizeof(network)) == -1)
-		throw (std::runtime_error("Error: binding socket failed"));
+		throw (std::runtime_error("Error: binding socket failed: " + std::string(strerror(errno))));
 	
 	if (listen(fd_sock, MAX_LISTEN))
-		throw (std::runtime_error("Error: binding socket failed"));
+		throw (std::runtime_error("Error: listening on socket failed: " + std::string(strerror(errno))));
 	
 	try
 	{
@@ -65,19 +71,65 @@ void	Server::start(void)
 
 void	Server::run(int fd_sock)
 {
-	int	fd_poll = epoll_create1(0);
-	if (fd_poll == -1)
+	int							fd_epoll = epoll_create1(0);
+	epoll_event					events, trigger_events;;
+
+	if (fd_epoll == -1)
 		throw (std::runtime_error("Error: creating epoll failed: " + std::string(strerror(errno))));
 
-	epoll_event	event;
-	event.events = EPOLLIN;
-	event.data.fd = fd_sock;
+	events.data.fd = fd_sock;
+	if (epoll_ctl(fd_epoll, EPOLL_CTL_ADD, fd_sock, &events) == -1)
+		throw (std::runtime_error("Error: adding socket to epoll failed: " + std::string(strerror(errno))));
 
+	events.events = EPOLLIN | EPOLLOUT | EPOLLRDHUP;
 	while (_on)
 	{
-		std::cout << "Waiting for connection" << std::endl;
-		sleep(10);
+		if (epoll_wait(fd_epoll, &trigger_events, 1, -1) == -1)
+			throw (std::runtime_error("Error: waiting for epoll failed: " + std::string(strerror(errno))));
+
+		try
+		{
+			if (trigger_events.data.fd == fd_sock && trigger_events.events & EPOLLIN)
+			{
+				accept_client(fd_sock, fd_epoll, &events);
+				std::cout << "Client connected !" << std::endl;
+			}
+			else// if (trigger_events.events & EPOLLIN)
+			{
+				std::cout << "Client SENDING DAATA !" << std::endl;
+				client_request(fd_sock);
+				std::cout << "Client sent data !" << std::endl;
+				//not working yet ::sadface:: ::reallysadface::
+			}
+		}
+		catch(const std::exception& e)
+		{
+			throw (e);
+		}
+		// sleep(2);
 	}	
+}
+
+void	Server::accept_client(int fd_sock, int fd_epoll, epoll_event *events)
+{
+	sockaddr_in		client;
+	socklen_t		client_size = sizeof(client);
+	int				fd_client = accept(fd_sock, (struct sockaddr*)&client, &client_size);
+
+	if (fd_client == -1)
+		throw (std::runtime_error("Error: accepting client failed: " + std::string(strerror(errno))));
+	if (epoll_ctl(fd_epoll, EPOLL_CTL_ADD, fd_client, events) == -1)
+		throw (std::runtime_error("Error: adding client to epoll failed: " + std::string(strerror(errno))));
+}
+
+void	Server::client_request(int fd_sock)
+{
+	char	buffer[1024];
+	int		ret = recv(fd_sock, buffer, 1024, 0);
+
+	if (ret == -1)
+		throw (std::runtime_error("Error: receiving data from client failed: " + std::string(strerror(errno))));
+	std::cout << "Client sent: " << buffer << std::endl;
 }
 
 void	Server::setPort(int port)

@@ -13,6 +13,7 @@
 #ifndef	DEFINES_HPP
 #define	DEFINES_HPP
 
+# define MAX_CLIENTS 1000
 # define MAX_LISTEN 100
 
 #endif
