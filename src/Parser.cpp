@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.cpp                                         :+:      :+:    :+:   */
+/*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ibjean-b <ibjean-b@student.42.fr>          #+#  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,18 +10,18 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parser.hpp"
+#include "Parser.hpp"
 #include <fstream>
 
-parser::parser()
+Parser::Parser()
 {
 }
 
-parser::~parser()
+Parser::~Parser()
 {
 }
 
-parser::parser(std::string config_file)
+Parser::Parser(std::string config_file)
 {
 	std::ifstream file;
 	try

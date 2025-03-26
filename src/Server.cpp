@@ -19,6 +19,7 @@
 #include <cerrno>
 #include <netdb.h>
 #include <sys/types.h>
+#include <fcntl.h>
 
 #include <sys/wait.h> //REMOVE THIS LINE LATER
 Server::Server()
@@ -46,8 +47,11 @@ void	Server::start(void)
 	setsockopt(fd_sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(int)); //REMOVE THIS LINE LATER
 
 	if (fd_sock == -1)
-		throw (std::runtime_error("Error: creating socket failed"));
-	
+		throw (std::runtime_error("Error: creating socket failed: " + std::string(strerror(errno))));
+
+	if (fcntl(fd_sock, F_SETFL, O_NONBLOCK) == -1)
+		throw (std::runtime_error("Error: fcntl on socket failed: " + std::string(strerror(errno))));
+
 	sockaddr_in		network;
 	network.sin_family = AF_INET;
 	network.sin_port = htons(_port);
@@ -56,7 +60,7 @@ void	Server::start(void)
 	if (bind(fd_sock, (struct sockaddr*)&network, sizeof(network)) == -1)
 		throw (std::runtime_error("Error: binding socket failed: " + std::string(strerror(errno))));
 	
-	if (listen(fd_sock, MAX_LISTEN))
+	if (listen(fd_sock, SOMAXCONN))
 		throw (std::runtime_error("Error: listening on socket failed: " + std::string(strerror(errno))));
 	
 	try
@@ -65,71 +69,89 @@ void	Server::start(void)
 	}
 	catch(const std::exception& e)
 	{
-		throw (e);
+		throw;
 	}
 }
 
 void	Server::run(int fd_sock)
 {
 	int							fd_epoll = epoll_create1(0);
-	epoll_event					events, trigger_events;;
+	epoll_event					ev, events[MAX_FD];
 
 	if (fd_epoll == -1)
 		throw (std::runtime_error("Error: creating epoll failed: " + std::string(strerror(errno))));
 
-	events.data.fd = fd_sock;
-	if (epoll_ctl(fd_epoll, EPOLL_CTL_ADD, fd_sock, &events) == -1)
+	ev.data.fd = fd_sock;
+	ev.events = EPOLLIN | EPOLLOUT | EPOLLRDHUP;
+	if (epoll_ctl(fd_epoll, EPOLL_CTL_ADD, fd_sock, &ev) == -1)
 		throw (std::runtime_error("Error: adding socket to epoll failed: " + std::string(strerror(errno))));
 
-	events.events = EPOLLIN | EPOLLOUT | EPOLLRDHUP;
+	int nb_fd;
 	while (_on)
 	{
-		if (epoll_wait(fd_epoll, &trigger_events, 1, -1) == -1)
+		nb_fd = epoll_wait(fd_epoll, events, MAX_EVENTS, -1);
+		if (nb_fd == -1)
 			throw (std::runtime_error("Error: waiting for epoll failed: " + std::string(strerror(errno))));
-
 		try
 		{
-			if (trigger_events.data.fd == fd_sock && trigger_events.events & EPOLLIN)
+			for (int i = 0; i < nb_fd; i++)
 			{
-				accept_client(fd_sock, fd_epoll, &events);
-				std::cout << "Client connected !" << std::endl;
-			}
-			else// if (trigger_events.events & EPOLLIN)
-			{
-				std::cout << "Client SENDING DAATA !" << std::endl;
-				client_request(fd_sock);
-				std::cout << "Client sent data !" << std::endl;
-				//not working yet ::sadface:: ::reallysadface::
+				if (events[i].data.fd == fd_sock)
+					accept_client(fd_sock, fd_epoll);
+				else if (events[i].events & EPOLLRDHUP)
+					disconnect_client(fd_epoll, events->data.fd);
+				else if (events[i].events & EPOLLIN)
+					client_request(fd_epoll, events[i].data.fd);
 			}
 		}
 		catch(const std::exception& e)
 		{
-			throw (e);
+			throw ;
 		}
-		// sleep(2);
 	}	
 }
 
-void	Server::accept_client(int fd_sock, int fd_epoll, epoll_event *events)
+void	Server::disconnect_client(int fd_epoll, int fd_client)
 {
+	if (epoll_ctl(fd_epoll, EPOLL_CTL_DEL, fd_client, NULL) == -1)
+		throw (std::runtime_error("Error: deleting client from epoll failed: " + std::string(strerror(errno))));
+	if (close(fd_client) == -1)
+		throw (std::runtime_error("Error: closing client socket failed: " + std::string(strerror(errno))));
+	std::cout << "Client disconnected" << std::endl;
+}
+
+void	Server::accept_client(int fd_sock, int fd_epoll)
+{
+	epoll_event		ev;
 	sockaddr_in		client;
 	socklen_t		client_size = sizeof(client);
 	int				fd_client = accept(fd_sock, (struct sockaddr*)&client, &client_size);
 
+	ev.data.fd = fd_client;
+	ev.events = EPOLLRDHUP | EPOLLIN | EPOLLOUT;
 	if (fd_client == -1)
 		throw (std::runtime_error("Error: accepting client failed: " + std::string(strerror(errno))));
-	if (epoll_ctl(fd_epoll, EPOLL_CTL_ADD, fd_client, events) == -1)
+		
+	if (fcntl(fd_client, F_SETFL, O_NONBLOCK) == -1)
+		throw (std::runtime_error("Error: fcntl on client failed: " + std::string(strerror(errno))));
+
+	if (epoll_ctl(fd_epoll, EPOLL_CTL_ADD, fd_client, &ev) == -1)
 		throw (std::runtime_error("Error: adding client to epoll failed: " + std::string(strerror(errno))));
+	else // remove this later
+		std::cout << "Client connected" << std::endl;
 }
 
-void	Server::client_request(int fd_sock)
+void	Server::client_request(int fd_epoll, int fd_client)
 {
 	char	buffer[1024];
-	int		ret = recv(fd_sock, buffer, 1024, 0);
+	int		ret = recv(fd_client, buffer, 1024, 0);
 
 	if (ret == -1)
 		throw (std::runtime_error("Error: receiving data from client failed: " + std::string(strerror(errno))));
-	std::cout << "Client sent: " << buffer << std::endl;
+	else if (ret == 0)
+		disconnect_client(fd_epoll, fd_client);
+	else
+		std::cout << "Client sent: " << buffer << std::endl;
 }
 
 void	Server::setPort(int port)

@@ -36,8 +36,9 @@ public:
 
 	void	start(void);
 	void	run(int fd_sock);
-	void	accept_client(int fd_sock, int fd_epoll, epoll_event *events);
-	void	client_request(int fd_sock);
+	void	accept_client(int fd_sock, int fd_epoll);
+	void	disconnect_client(int fd_epoll, int fd_client);
+	void	client_request(int fd_epoll, int fd_client);
 
 	//GETTERS AND SETTERS
 	int						getPort(void);
