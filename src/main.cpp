@@ -12,24 +12,15 @@
 
 #include <iostream>
 #include "Server.hpp"
+#include "Configuration.hpp"
 
 int	main(int argc, char const *argv[])
 {
-	std::string	config = "config/default.conf";
-	if (argc != 2)
-	{
-		std::cerr << "Usage: " << argv[0] << " [config_file]" << std::endl;
-		return (1);
-	}
+	std::string configPath;
+	if (argc == 1)
+		configPath = "./config/default.conf";
 	else
-		config = argv[1];
-	try
-	{
-		
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
+		configPath = argv[1];
+	Configuration config(configPath);
 	return (0);
 }

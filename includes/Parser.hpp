@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.hpp                                         :+:      :+:    :+:   */
+/*   Parser.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ibjean-b <ibjean-b@student.42.fr>          #+#  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -14,14 +14,18 @@
 #define PARSER_HPP
 
 #include <iostream>
+#include <vector>
+#include "AtributesParser.hpp"
 
-class parser
+class Parser
 {
 private:
+	std::string _config_file;
+	std::vector<AtributesParser> _config;
 public:
-	parser();
-	~parser();
-	parser(std::string config_file);
+	Parser();
+	~Parser();
+	Parser(std::string config_file);
 };
 
 #endif

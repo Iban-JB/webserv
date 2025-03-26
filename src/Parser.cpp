@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.cpp                                         :+:      :+:    :+:   */
+/*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ibjean-b <ibjean-b@student.42.fr>          #+#  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -13,15 +13,15 @@
 #include "Parser.hpp"
 #include <fstream>
 
-parser::parser()
+Parser::Parser()
 {
 }
 
-parser::~parser()
+Parser::~Parser()
 {
 }
 
-parser::parser(std::string config_file)
+Parser::Parser(std::string config_file)
 {
 	std::ifstream file;
 	try
@@ -29,7 +29,6 @@ parser::parser(std::string config_file)
 		file.open(config_file.c_str());
 		if (!file.is_open())
 			throw (std::runtime_error("Error: could not open file"));
-		//parse_file(file);
 		file.close();
 	}
 	catch(const std::exception& e)
