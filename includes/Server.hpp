@@ -27,18 +27,23 @@ public:
 	Server(const std::string &name, int port, const std::string &host, const std::vector<Location> &loc);
 	~Server();
 
-	int get_port() const;
-	const std::vector<Location> &get_loc() const;
-	const std::string 			&get_host() const;
-	const std::string 			&get_name() const;
-
-	explicit Server(const std::string &host);
+	const std::string &getName() const;
+	void setName(const std::string &name);
+	int getPort() const;
+	void setPort(int port);
+	const std::string &getHost() const;
+	void setHost(const std::string &host);
+	const std::vector<Location> &getLoc() const;
+	void setLoc(const std::vector<Location> &loc);
+	bool isOn() const;
+	void setOn(bool on);
 
 private:
 	int						_port;
 	std::string				_host;
 	std::string				_name;
 	std::vector<Location>	_loc;
+	bool 					_on;
 };
 
 #endif

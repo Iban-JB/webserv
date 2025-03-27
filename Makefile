@@ -15,7 +15,8 @@ SRC = main.cpp \
 	Parser.cpp \
 	Http.cpp \
 	Configuration.cpp \
-	AtributesParser.cpp \
+	AttributesParser.cpp \
+	utils/ExtendsString.cpp
 
 SRC_PATH = src/
 
@@ -33,7 +34,7 @@ DEP = $(OBJ:.o=.d)
 
 all:$(NAME)
 
-IFLAGS = -I$(INCLUDE_DIR)
+IFLAGS = -I$(INCLUDE_DIR) -I$(INCLUDE_DIR)/utils
 
 -include $(DEP)
 

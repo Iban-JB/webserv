@@ -15,17 +15,23 @@
 
 #include <iostream>
 #include <vector>
-#include "AtributesParser.hpp"
+#include "AttributesParser.hpp"
+#include "Server.hpp"
 
 class Parser
 {
 private:
-	std::string _config_file;
-	std::vector<AtributesParser> _config;
+	std::string _configFile;
+	std::vector<Server> _config;
+	void ParseFile(std::string &fileContent);
+	void readFile(std::ifstream &file);
 public:
-	Parser();
+	const std::vector<Server> &getConfig() const;
+	void setConfig(const std::vector<Server> &config);
+	const std::string &getConfigFile() const;
+	void setConfigFile(const std::string &configFile);
 	~Parser();
-	Parser(std::string config_file);
+	Parser(const std::string &config_file);
 };
 
 #endif

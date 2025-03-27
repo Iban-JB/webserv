@@ -20,28 +20,57 @@ Server::~Server()
 {
 }
 
-int Server::get_port() const
-{
-	return _port;
-}
+Server::Server(const std::string &name, int port, const std::string &host, const std::vector<Location> &loc): _port(port), _host(host),  _name(name),
+ _loc(loc)
+{}
 
-const std::string &Server::get_host() const
-{
-	return _host;
-}
-
-const std::string &Server::get_name() const
+const std::string &Server::getName() const
 {
 	return _name;
 }
 
-const std::vector<Location> &Server::get_loc() const
+void Server::setName(const std::string &name)
+{
+	_name = name;
+}
+
+int Server::getPort() const
+{
+	return _port;
+}
+
+void Server::setPort(int port)
+{
+	_port = port;
+}
+
+const std::string &Server::getHost() const
+{
+	return _host;
+}
+
+void Server::setHost(const std::string &host)
+{
+	_host = host;
+}
+
+const std::vector<Location> &Server::getLoc() const
 {
 	return _loc;
 }
 
+void Server::setLoc(const std::vector<Location> &loc)
+{
+	_loc = loc;
+}
 
-Server::Server(const std::string &name, int port, const std::string &host, const std::vector<Location> &loc): _port(port), _host(host),  _name(name),
- _loc(loc)
-{}
+bool Server::isOn() const
+{
+	return _on;
+}
+
+void Server::setOn(bool on)
+{
+	_on = on;
+}
 

@@ -11,28 +11,72 @@
 /* ************************************************************************** */
 
 #include "Parser.hpp"
+#include "ExtendsString.hpp"
 #include <fstream>
-
-Parser::Parser()
-{
-}
 
 Parser::~Parser()
 {
+
 }
 
-Parser::Parser(std::string config_file)
+Parser::Parser(const std::string &config_file): _configFile(config_file)
 {
-	std::ifstream file;
+	std::ifstream file(config_file.c_str());
 	try
-	{
-		file.open(config_file.c_str());
+	{;
 		if (!file.is_open())
-			throw (std::runtime_error("Error: could not open file"));
+			throw (std::runtime_error("Error: could not open " + config_file));
+		this->readFile(file);
 		file.close();
 	}
 	catch(const std::exception& e)
 	{
 		std::cerr << e.what() << '\n';
 	}
+}
+
+void Parser::readFile(std::ifstream &file)
+{
+	std::string line;
+	std::string fileContent;
+	AttributesParser attribute = AttributesParser();
+	while (std::getline(file, line)) {
+		size_t comment = line.find('#');
+		if (comment != std::string::npos)
+			line = line.substr(0, comment);
+		fileContent += line + "\n";
+	}
+}
+
+void Parser::ParseFile(std::string &fileContent)
+{
+	std::string line;
+	std::string fileContent;
+	AttributesParser attribute = AttributesParser();
+	while (std::getline(file, line)) {
+		size_t comment = line.find('#');
+		if (comment != std::string::npos)
+			line = line.substr(0, comment);
+		fileContent += line + "\n";
+	}
+}
+
+const std::vector<Server> &Parser::getConfig() const
+{
+	return _config;
+}
+
+void Parser::setConfig(const std::vector<Server> &config)
+{
+	_config = config;
+}
+
+const std::string &Parser::getConfigFile() const
+{
+	return _configFile;
+}
+
+void Parser::setConfigFile(const std::string &configFile)
+{
+	_configFile = configFile;
 }
